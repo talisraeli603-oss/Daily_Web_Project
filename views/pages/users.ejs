@@ -1,0 +1,72 @@
+<%# Users page (editors only): list, search, create, edit and delete reporter and editor accounts. -%>
+<%# The table is filled in the browser by public/js/users.js, which talks to the users API. -%>
+<%- include('../partials/header') %>
+<h1 class="page-title">Users</h1>
+<%- include('../partials/editor-tabs') %>
+<p class="muted">Create, edit and remove reporter and editor accounts. Passwords are stored only as salted hashes.</p>
+
+<%# Two columns: the user list on the left, the add / edit form on the right. -%>
+<div class="split">
+  <section class="split-main" aria-labelledby="users-title">
+    <%# This heading is only for screen readers (sr-only hides it visually). -%>
+    <h2 id="users-title" class="sr-only">User list</h2>
+    <%# Search by name and filter by role. -%>
+    <form id="user-filters" class="filters" role="search">
+      <div class="field field-grow">
+        <label for="u-q">Search users</label>
+        <input id="u-q" type="search" name="q" placeholder="Username or name" maxlength="100" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="u-role">Role</label>
+        <select id="u-role" name="role">
+          <option value="">All roles</option>
+          <option value="reporter">Reporters</option>
+          <option value="editor">Editors</option>
+        </select>
+      </div>
+    </form>
+    <%# The table body is empty here. users.js adds one row per user. -%>
+    <div class="table-wrap">
+      <table class="table" id="users-table">
+        <thead><tr><th scope="col">Username</th><th scope="col">Name</th><th scope="col">Role</th><th scope="col">Actions</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="users-pager" class="pager"></div>
+  </section>
+
+  <section class="split-side" aria-labelledby="user-form-title">
+    <h2 id="user-form-title">Add a user</h2>
+    <%# One form for both adding and editing. The hidden id field is empty when adding and holds the user id when editing. users.js switches the mode. -%>
+    <form id="user-form" class="stack" novalidate>
+      <input type="hidden" name="id" value="">
+      <div class="field">
+        <label for="uf-username">Username</label>
+        <input id="uf-username" name="username" type="text" maxlength="30" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="uf-displayName">Display name</label>
+        <input id="uf-displayName" name="displayName" type="text" maxlength="60" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="uf-role">Role</label>
+        <select id="uf-role" name="role">
+          <option value="reporter">Reporter</option>
+          <option value="editor">Editor</option>
+        </select>
+      </div>
+      <%# Password field. When editing, the hint says an empty field keeps the old password. It is type=password so it is not shown on screen. -%>
+      <div class="field">
+        <label for="uf-password">Password <span class="muted" id="uf-password-hint"></span></label>
+        <input id="uf-password" name="password" type="password" maxlength="72" autocomplete="new-password">
+      </div>
+      <p id="user-form-error" class="form-error" role="alert" hidden></p>
+      <div class="form-bar-actions">
+        <button type="submit" class="btn" id="uf-submit">Create user</button>
+        <button type="button" class="btn btn-ghost" id="uf-cancel" hidden>Cancel editing</button>
+      </div>
+    </form>
+  </section>
+</div>
+<%# Footer loads users.js, the code for this page. -%>
+<%- include('../partials/footer', { scripts: ['/js/users.js'] }) %>

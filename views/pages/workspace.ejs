@@ -1,0 +1,32 @@
+<%# Reporter workspace ("My articles", reporters only): the reporter's own articles with search and a state filter. -%>
+<%# The list is built in the browser by public/js/manage-list.js (the same script as the editor list, but with data-area="workspace"). -%>
+<%- include('../partials/header') %>
+<div class="page-head">
+  <h1 class="page-title">My articles</h1>
+  <a class="btn" href="/workspace/articles/new">Write a new article</a>
+</div>
+<p class="muted">Your work is saved automatically while you write. Articles are published only after an editor approves them.</p>
+
+<%# Filter form: search by title and choose a state. -%>
+<form id="list-filters" class="filters" role="search">
+  <div class="field field-grow">
+    <label for="lf-q">Search my articles</label>
+    <input id="lf-q" type="search" name="q" placeholder="Search by title" maxlength="100" autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="lf-status">State</label>
+    <select id="lf-status" name="status">
+      <option value="all">All states</option>
+      <%# One option per state. STATUS_LABELS gives the nice name for each state. -%>
+      <% ['in_preparation', 'pending_approval', 'returned', 'published'].forEach(function (s) { %>
+        <option value="<%= s %>"><%= STATUS_LABELS[s] %></option>
+      <% }); %>
+    </select>
+  </div>
+</form>
+
+<%# Empty list and page buttons. manage-list.js fills them. data-area="workspace" tells the script to use the reporter links and API. -%>
+<div id="manage-list" class="manage-list" data-area="workspace" aria-live="polite"><p class="muted">Loading your articles&hellip;</p></div>
+<div id="manage-pager" class="pager"></div>
+<%# Footer loads manage-list.js, the code for this page. -%>
+<%- include('../partials/footer', { scripts: ['/js/manage-list.js'] }) %>

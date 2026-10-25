@@ -1,0 +1,16 @@
+<%# Review page (editors only): look at one article, compare the update with the published version, then approve, return or delete it. -%>
+<%# This page is only a frame. public/js/review.js loads the article from the API and draws everything inside it. -%>
+<%- include('../partials/header') %>
+<div class="page-head">
+  <h1 class="page-title">Review article</h1>
+  <%# The colored state badge (for example "Awaiting approval") is put here by review.js. -%>
+  <div id="review-status" class="status-slot"></div>
+</div>
+<%- include('../partials/editor-tabs') %>
+
+<%# Empty box that review.js fills. data-article-id tells the script which article to load. -%>
+<div id="review-root" data-article-id="<%= articleId %>">
+  <p class="muted">Loading article&hellip;</p>
+</div>
+<%# Footer loads review.js, the code for this page. -%>
+<%- include('../partials/footer', { scripts: ['/js/review.js'] }) %>

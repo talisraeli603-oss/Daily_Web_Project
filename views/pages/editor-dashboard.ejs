@@ -1,0 +1,30 @@
+<%# Editor area home (editors only): list of ALL articles in the system with search and a state filter. -%>
+<%# The list is built in the browser by public/js/manage-list.js (the same script is used for the reporter's "My articles" page). -%>
+<%- include('../partials/header') %>
+<h1 class="page-title">Editor area</h1>
+<%- include('../partials/editor-tabs') %>
+<p class="muted">All articles in the system. Open an article waiting for approval to review it, edit it, publish it, or return it to the reporter.</p>
+
+<%# Filter form: search by title and choose a state. -%>
+<form id="list-filters" class="filters" role="search">
+  <div class="field field-grow">
+    <label for="lf-q">Search articles</label>
+    <input id="lf-q" type="search" name="q" placeholder="Search by title" maxlength="100" autocomplete="off">
+  </div>
+  <div class="field">
+    <label for="lf-status">State</label>
+    <select id="lf-status" name="status">
+      <option value="all">All states</option>
+      <%# One option per state. Pending approval comes first because that is what the editor has to act on. STATUS_LABELS gives the nice name. -%>
+      <% ['pending_approval', 'in_preparation', 'returned', 'published'].forEach(function (s) { %>
+        <option value="<%= s %>"><%= STATUS_LABELS[s] %></option>
+      <% }); %>
+    </select>
+  </div>
+</form>
+
+<%# Empty list and page buttons. manage-list.js fills them. data-area="editor" tells the script to use the editor links and API. -%>
+<div id="manage-list" class="manage-list" data-area="editor" aria-live="polite"><p class="muted">Loading articles&hellip;</p></div>
+<div id="manage-pager" class="pager"></div>
+<%# Footer loads manage-list.js, the code for this page. -%>
+<%- include('../partials/footer', { scripts: ['/js/manage-list.js'] }) %>

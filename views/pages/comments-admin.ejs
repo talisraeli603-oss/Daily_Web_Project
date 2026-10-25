@@ -1,0 +1,19 @@
+<%# Comments management page (editors only): search, correct and delete reader comments. -%>
+<%# The list itself is built in the browser by public/js/comments-admin.js. -%>
+<%- include('../partials/header') %>
+<h1 class="page-title">Comments</h1>
+<%- include('../partials/editor-tabs') %>
+<p class="muted">Search, correct or remove reader comments.</p>
+
+<%# Search form. The script searches while the editor types (no page reload). -%>
+<form id="comment-filters" class="filters" role="search">
+  <div class="field field-grow">
+    <label for="cm-q">Search comments</label>
+    <input id="cm-q" type="search" name="q" placeholder="Text or author name" maxlength="100" autocomplete="off">
+  </div>
+</form>
+<%# Empty list and page buttons. The script fills them (the "Loading" text is shown until the first answer arrives). -%>
+<div id="comments-admin" class="manage-list" aria-live="polite"><p class="muted">Loading comments&hellip;</p></div>
+<div id="comments-pager" class="pager"></div>
+<%# Footer loads comments-admin.js, the code for this page. -%>
+<%- include('../partials/footer', { scripts: ['/js/comments-admin.js'] }) %>

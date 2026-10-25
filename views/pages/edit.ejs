@@ -1,0 +1,64 @@
+<%# Article editor page, used for both a new article and editing an existing one (reporters and editors). -%>
+<%# The form fields are empty here. public/js/edit.js loads the article through the API, fills the fields and saves them. -%>
+<%- include('../partials/header') %>
+<div class="page-head">
+  <%# The heading says "Edit article" if we have an article id, otherwise "New article". -%>
+  <h1 class="page-title" id="edit-heading"><%= articleId ? 'Edit article' : 'New article' %></h1>
+  <div id="edit-status" class="status-slot"></div>
+</div>
+
+<%# Hidden message box. edit.js shows it for notes like "returned for corrections". -%>
+<div id="edit-banner" class="notice" role="status" hidden></div>
+
+<div id="review-history-slot"></div>
+
+<%# The editor form. data-article-id is empty for a new article. data-area says if we are in the reporter area (workspace) or the editor area. -%>
+<form id="edit-form" class="stack editor-form" novalidate
+      data-article-id="<%= articleId %>" data-area="<%= area %>">
+  <div class="field">
+    <label for="e-title">Title</label>
+    <input id="e-title" name="title" type="text" maxlength="150" autocomplete="off">
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label for="e-category">Category</label>
+      <select id="e-category" name="category">
+        <option value="">Choose a category</option>
+        <%# One option for every category in our list (the list comes from the server, so it is the same everywhere). -%>
+        <% categories.forEach(function (c) { %><option value="<%= c %>"><%= c %></option><% }); %>
+      </select>
+    </div>
+    <div class="field field-grow">
+      <label for="e-image">Main image address</label>
+      <input id="e-image" name="image" type="text" maxlength="500" placeholder="https://... or /placeholder/Science/1.svg" autocomplete="off">
+    </div>
+  </div>
+  <div class="field">
+    <label for="e-summary">Summary <span class="muted" id="summary-count"></span></label>
+    <textarea id="e-summary" name="summary" rows="3" maxlength="300"></textarea>
+  </div>
+  <%# Small preview of the image. Hidden until edit.js has an image address to show. -%>
+  <figure class="image-preview" id="image-preview" hidden>
+    <img src="" alt="Preview of the main image">
+  </figure>
+  <div class="field">
+    <label for="e-content">Article text <span class="muted" id="content-count"></span></label>
+    <textarea id="e-content" name="content" rows="18" maxlength="20000"></textarea>
+    <p class="muted small">Separate paragraphs with a blank line.</p>
+  </div>
+
+  <%# Bottom bar: the save status text and the buttons. -%>
+  <%# Which buttons are visible depends on the article state and who is logged in. edit.js shows or hides them (they start hidden). -%>
+  <div class="form-bar">
+    <p id="save-state" class="save-state" role="status" aria-live="polite">&nbsp;</p>
+    <div class="form-bar-actions">
+      <a class="btn btn-ghost" id="back-link" href="<%= area === 'editor' ? '/editor' : '/workspace' %>">Back to the list</a>
+      <a class="btn btn-ghost" id="review-link" href="#" hidden>Review &amp; decide</a>
+      <button type="button" class="btn btn-ghost" id="save-btn">Save changes</button>
+      <button type="button" class="btn" id="submit-btn" hidden>Submit for editor approval</button>
+      <button type="button" class="btn btn-success" id="publish-btn" hidden>Save &amp; publish</button>
+    </div>
+  </div>
+</form>
+<%# Footer loads edit.js, the code for this page. -%>
+<%- include('../partials/footer', { scripts: ['/js/edit.js'] }) %>

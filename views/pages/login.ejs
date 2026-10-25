@@ -1,0 +1,25 @@
+<%# Staff login page: reporters and editors log in here. Readers don't need an account. -%>
+<%- include('../partials/header') %>
+<section class="auth-card" aria-labelledby="login-title">
+  <h1 id="login-title" class="page-title">Staff login</h1>
+  <p class="muted">For reporters and editors. Readers do not need an account.</p>
+  <%# Error message from the server (for example a wrong password). Only printed if there is one. -%>
+  <% if (error) { %><p class="form-error" role="alert"><%= error %></p><% } %>
+  <%# Plain HTML form that POSTs to /login (no JavaScript needed). The server checks the password and starts the session. -%>
+  <form action="/login" method="post" class="stack" id="login-form">
+    <%# Hidden field: remembers the page the user wanted before being sent to login, so we can go back there after logging in. -%>
+    <%# Important: the server only accepts local paths for this value (not other websites), so it can't be used for an open redirect. -%>
+    <input type="hidden" name="next" value="<%= next %>">
+    <div class="field">
+      <label for="l-username">Username</label>
+      <%# The username is filled in again after a failed login, so the user doesn't retype it. The password is never sent back. -%>
+      <input id="l-username" name="username" type="text" value="<%= username %>" required autocomplete="username" autofocus maxlength="100">
+    </div>
+    <div class="field">
+      <label for="l-password">Password</label>
+      <input id="l-password" name="password" type="password" required autocomplete="current-password" maxlength="200">
+    </div>
+    <button type="submit" class="btn">Log in</button>
+  </form>
+</section>
+<%- include('../partials/footer') %>
