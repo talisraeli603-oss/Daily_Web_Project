@@ -1,0 +1,27 @@
+{
+  "name": "the-daily-web",
+  "version": "1.0.0",
+  "description": "The Daily Web - a news management, editing and publishing system (Node.js, Express, MVC, EJS, Mongoose, Vanilla JS).",
+  "main": "server.js",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "chart.js": "^4.5.1",
+    "connect-mongo": "^6.0.0",
+    "dotenv": "^18.0.8",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "mongoose": "^9.11.2"
+  }
+}
