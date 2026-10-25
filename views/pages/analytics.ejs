@@ -1,0 +1,60 @@
+<%# Impact Analytics page (editors only): pick a published article and see its views per hour as a chart. -%>
+<%# The page is mostly an empty frame. Everything inside it is filled in the browser by public/js/analytics.js. -%>
+<%- include('../partials/header') %>
+<h1 class="page-title">Impact Analytics</h1>
+<%# The tabs shared by all editor pages (Articles / Impact Analytics / Comments / Users). -%>
+<%- include('../partials/editor-tabs') %>
+<p class="muted">Pick a published article to see how many people viewed it over time, and how the views changed after each update was approved and published.</p>
+
+<%# Main frame. data-preselect holds the article id from the address (?article=...), so the chart opens straight away. -%>
+<div class="analytics" id="analytics" data-preselect="<%= preselect %>">
+  <%# Left side: search box + list of published articles + page buttons. The list is filled by analytics.js. -%>
+  <section class="analytics-picker" aria-labelledby="picker-title">
+    <h2 id="picker-title">Choose an article</h2>
+    <div class="field">
+      <label for="a-q">Search by title</label>
+      <input id="a-q" type="search" maxlength="100" placeholder="Type to search" autocomplete="off">
+    </div>
+    <ul id="a-results" class="pick-list" aria-live="polite"></ul>
+    <div id="a-pager" class="pager"></div>
+  </section>
+
+  <%# Right side: the chart and its settings. %>
+  <section class="analytics-chart" aria-labelledby="chart-title">
+    <h2 id="chart-title">Views over time</h2>
+    <p id="chart-article" class="muted">No article selected.</p>
+    <%# Two dropdowns: how far back the chart goes, and how many hours we compare before / after an update. -%>
+    <div class="filters">
+      <div class="field">
+        <label for="a-range">Time range</label>
+        <select id="a-range">
+          <option value="24">Last 24 hours</option>
+          <option value="72">Last 3 days</option>
+          <option value="168">Last 7 days</option>
+          <option value="720">Last 30 days</option>
+          <option value="all" selected>Since first publication</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="a-window">Compare before / after using</label>
+        <select id="a-window">
+          <option value="6">6 hours</option>
+          <option value="12">12 hours</option>
+          <option value="24" selected>24 hours</option>
+          <option value="48">48 hours</option>
+          <option value="72">72 hours</option>
+        </select>
+      </div>
+    </div>
+    <%# Important: this canvas is where Chart.js draws the line chart. The aria-label describes it for screen readers. -%>
+    <div class="chart-box">
+      <canvas id="views-chart" role="img" aria-label="Line chart of article views per hour with markers for published updates"></canvas>
+    </div>
+    <p id="chart-status" class="muted" aria-live="polite"></p>
+    <%# List of the publish / update moments with the before-and-after numbers (filled by analytics.js). -%>
+    <h3>Published updates</h3>
+    <ul id="markers-list" class="marker-list"></ul>
+  </section>
+</div>
+<%# The footer loads the scripts we ask for: Chart.js (the chart library, our own copy in /vendor) and analytics.js (our page code). -%>
+<%- include('../partials/footer', { scripts: ['/vendor/chart.js/chart.umd.js', '/js/analytics.js'] }) %>
