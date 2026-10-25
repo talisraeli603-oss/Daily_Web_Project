@@ -1,0 +1,16 @@
+<%# Partial: the sidebar next to the news feed and the article page (a weather box and an "About" box). -%>
+<aside class="sidebar" aria-label="Sidebar">
+  <%# Weather box. It starts with "Loading..." and weather.js replaces it. -%>
+  <%# Important: weather.js asks our own server (/api/v1/weather), and the server asks OpenWeatherMap and keeps the answer for a while (cache). This keeps the API key private and avoids calling the weather service on every visit. -%>
+  <section class="widget widget-weather" id="weather-widget" aria-labelledby="weather-title">
+    <h2 id="weather-title" class="widget-title">Weather</h2>
+    <div id="weather-body" class="weather-body">
+      <p class="muted">Loading weather&hellip;</p>
+    </div>
+  </section>
+  <%# Static text box about the site. -%>
+  <section class="widget widget-about" aria-labelledby="about-title">
+    <h2 id="about-title" class="widget-title">About</h2>
+    <p class="muted">Every story here was written by our reporters and approved by an editor before publication.</p>
+  </section>
+</aside>

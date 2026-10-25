@@ -1,0 +1,14 @@
+<%# Error page: shown for 404 (not found), 403 (no access), 401 (not logged in) and other server errors. -%>
+<%# The header and footer are shared partials, so the error page looks like the rest of the site. -%>
+<%- include('../partials/header', { description: '', ogImage: '' }) %>
+<section class="error-page">
+  <%# The status number (for example 404) and a short title picked from it. -%>
+  <%# Important: the equals-sign tag escapes the text, so a message with HTML in it can't inject code (XSS protection). -%>
+  <p class="error-code"><%= status %></p>
+  <h1 class="page-title"><%= status === 404 ? 'Page not found' : status === 403 ? 'Access denied' : status === 401 ? 'Please log in' : 'Something went wrong' %></h1>
+  <p><%= message %></p>
+  <%# The technical stack trace is only filled in by the server when it is not production and the error is a server error (500+), so visitors don't see it. -%>
+  <% if (stack) { %><pre class="error-stack"><%= stack %></pre><% } %>
+  <p><a class="btn" href="/">Back to the news</a></p>
+</section>
+<%- include('../partials/footer') %>

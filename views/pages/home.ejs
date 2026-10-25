@@ -1,0 +1,80 @@
+<%# Home page (public): the news feed with category links, a search / filter form, and the sidebar. -%>
+<%# Important: the first batch of articles is rendered on the server (EJS), so the page is useful right away and search engines can read it. feed.js then loads more as the reader scrolls. -%>
+<%- include('../partials/header') %>
+<div class="layout">
+  <div class="layout-main">
+    <section class="hero" aria-labelledby="home-title">
+      <h1 id="home-title" class="page-title">Latest news</h1>
+      <p>Fresh stories from our reporters, checked and approved by our editors.</p>
+    </section>
+
+    <%# Category links. The one that matches the current filter gets the "active" class. -%>
+    <nav class="chips" aria-label="Browse by category">
+      <a class="chip <%= !filters.category ? 'active' : '' %>" href="/">All</a>
+      <%# One link for every category. encodeURIComponent makes the category safe to put in the address. -%>
+      <% categories.forEach(function (c) { %>
+        <a class="chip <%= filters.category === c ? 'active' : '' %>" data-category="<%= c %>" href="/?category=<%= encodeURIComponent(c) %>"><%= c %></a>
+      <% }); %>
+    </nav>
+
+    <%# Search and filter form. It uses GET, so the filters end up in the address (and the page still works without JavaScript). -%>
+    <%# The fields start with the values the server got, so the form shows what was searched. The escaping tag keeps the search text safe (XSS protection). -%>
+    <form id="filters" class="filters" role="search" action="/" method="get">
+      <div class="field field-grow">
+        <label for="f-q">Search articles</label>
+        <input id="f-q" type="search" name="q" value="<%= filters.q %>" placeholder="Search by title or summary" maxlength="100" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="f-category">Category</label>
+        <select id="f-category" name="category">
+          <option value="">All categories</option>
+          <% categories.forEach(function (c) { %>
+            <option value="<%= c %>" <%= filters.category === c ? 'selected' : '' %>><%= c %></option>
+          <% }); %>
+        </select>
+      </div>
+      <%# Read status: the server remembers which articles this visitor already opened. -%>
+      <div class="field">
+        <label for="f-viewed">Read status</label>
+        <select id="f-viewed" name="viewed">
+          <option value="all" <%= filters.viewed === 'all' ? 'selected' : '' %>>All articles</option>
+          <option value="unviewed" <%= filters.viewed === 'unviewed' ? 'selected' : '' %>>Not viewed yet</option>
+          <option value="viewed" <%= filters.viewed === 'viewed' ? 'selected' : '' %>>Already viewed</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-sort">Sort by</label>
+        <select id="f-sort" name="sort">
+          <option value="date" <%= filters.sort === 'date' ? 'selected' : '' %>>Publish date (newest)</option>
+          <option value="popular" <%= filters.sort === 'popular' ? 'selected' : '' %>>Popularity (most viewed)</option>
+        </select>
+      </div>
+      <div class="field field-actions">
+        <button type="submit" class="btn">Search</button>
+        <a href="/" id="f-reset" class="btn btn-ghost">Reset</a>
+      </div>
+    </form>
+
+    <%# Hidden text for screen readers: feed.js writes how many articles were found. -%>
+    <p id="feed-count" class="muted sr-only" aria-live="polite"></p>
+
+    <%# The feed. The server prints the first articles with the card partial. data-next-cursor tells feed.js where the next batch starts. -%>
+    <section id="feed" class="feed" aria-label="News feed" data-next-cursor="<%= nextCursor || '' %>">
+      <% items.forEach(function (item) { %>
+        <%- include('../partials/card', { item: item }) %>
+      <% }); %>
+    </section>
+
+    <%# Shows "No articles match" when the list is empty. feed.js also uses this box for loading messages. -%>
+    <div id="feed-status" class="feed-status" aria-live="polite">
+      <% if (!items.length) { %><p class="empty">No articles match your search.</p><% } %>
+    </div>
+    <%# An invisible marker at the bottom. When the reader scrolls near it, feed.js loads the next articles (infinite scroll). -%>
+    <div id="feed-sentinel" aria-hidden="true"></div>
+    <noscript><p class="muted">Enable JavaScript to load more articles automatically.</p></noscript>
+  </div>
+  <%# Sidebar with the weather widget and the "About" box. -%>
+  <%- include('../partials/sidebar') %>
+</div>
+<%# Scripts: weather.js fills the sidebar weather, feed.js handles live search, filters and infinite scroll. -%>
+<%- include('../partials/footer', { scripts: ['/js/weather.js', '/js/feed.js'] }) %>

@@ -1,0 +1,8 @@
+<%# Partial: the tab bar shared by all editor pages (Articles, Impact Analytics, Comments, Users). -%>
+<%# The tab whose address matches the current page (currentPath) gets the "active" class so it is highlighted. -%>
+<nav class="subnav" aria-label="Editor sections">
+  <a href="/editor" class="<%= currentPath === '/editor' ? 'active' : '' %>">Articles</a>
+  <a href="/editor/analytics" class="<%= currentPath.startsWith('/editor/analytics') ? 'active' : '' %>">Impact Analytics</a>
+  <a href="/editor/comments" class="<%= currentPath.startsWith('/editor/comments') ? 'active' : '' %>">Comments</a>
+  <a href="/editor/users" class="<%= currentPath.startsWith('/editor/users') ? 'active' : '' %>">Users</a>
+</nav>

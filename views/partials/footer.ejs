@@ -1,0 +1,19 @@
+<%# Partial: the bottom of every page. It closes the tags that header.ejs opened (main, body, html) and loads the scripts. -%>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <%# The year is read from the server clock each time, so the copyright never goes out of date. -%>
+      <p>&copy; <%= new Date().getFullYear() %> The Daily Web - a course project. Only approved and published articles are shown to readers.</p>
+    </div>
+  </footer>
+  <%# Empty box where DW.toast (in common.js) shows the small pop-up messages. -%>
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+  <%# common.js is loaded on every page: it has the shared helper object DW (API calls, building elements, toasts, pager...). -%>
+  <%# Scripts are put at the end of the body so they don't block the page from showing. -%>
+  <script src="/js/common.js"></script>
+  <%# Page-specific scripts. Each page passes a "scripts" list when it includes the footer. If it passes none, we use an empty list. -%>
+  <% (typeof scripts !== 'undefined' ? scripts : []).forEach(function (src) { %>
+  <script src="<%= src %>"></script>
+  <% }); %>
+</body>
+</html>

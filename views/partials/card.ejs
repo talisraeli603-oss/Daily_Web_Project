@@ -1,0 +1,22 @@
+<%# Partial: one article card in the news feed. The home page includes it once per article, with the variable "item". -%>
+<%# Articles loaded later (infinite scroll) get the same card built in the browser by buildCard in common.js, so keep the two looking the same. -%>
+<%# Important: every value uses the escaping tag, so text from the database can't inject HTML (XSS protection). -%>
+<article class="card" data-id="<%= item.id %>" data-category="<%= item.category %>">
+  <%# Image link. It is hidden from keyboard and screen readers (tabindex -1, aria-hidden) because the title below already links to the same page. -%>
+  <%# loading="lazy" makes the browser load the image only when it is close to the screen. Width and height reserve the space so the page doesn't jump. -%>
+  <a class="card-image" href="/articles/<%= item.id %>" tabindex="-1" aria-hidden="true">
+    <img src="<%= item.image %>" alt="" loading="lazy" width="400" height="225">
+  </a>
+  <div class="card-body">
+    <p class="card-meta">
+      <span class="tag"><%= item.category %></span>
+      <span>By <%= item.author.displayName %></span>
+      <%# The server prints a date as a fallback. In the browser, common.js turns it into "x hours ago" (data-local-ago). -%>
+      <time datetime="<%= new Date(item.publishedAt).toISOString() %>" data-local-ago><%= fmtDateTime(item.publishedAt) %></time>
+    </p>
+    <h2 class="card-title"><a href="/articles/<%= item.id %>"><%= item.title %></a></h2>
+    <p class="card-summary"><%= item.summary %></p>
+    <p class="card-foot"><a class="read-more" href="/articles/<%= item.id %>">Read the full article</a>
+      <span class="muted views"><%= item.viewCount %> views</span></p>
+  </div>
+</article>

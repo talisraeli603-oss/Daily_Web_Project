@@ -1,0 +1,51 @@
+<%# Partial: the top of every page. It opens html, head, body and main (footer.ejs closes them) and shows the site header and the menu. -%>
+<%# Variables it uses: title, description, ogImage (set by the page or the server), user (who is logged in, or null) and currentPath (the current address). -%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%# Page title (the text in the browser tab). The escaping tag keeps it safe (XSS protection). -%>
+  <title><%= title %></title>
+  <%# Description and Open Graph tags: used by search engines and when the link is shared (for example the preview card in a chat). They are only printed when there is a value. -%>
+  <% if (description) { %><meta name="description" content="<%= description %>"><% } %>
+  <meta property="og:site_name" content="The Daily Web">
+  <meta property="og:title" content="<%= title %>">
+  <% if (description) { %><meta property="og:description" content="<%= description %>"><% } %>
+  <% if (ogImage) { %><meta property="og:image" content="<%= ogImage %>"><% } %>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<%# data-user-role lets our scripts know the role (reporter / editor / empty for a reader) without asking the server. -%>
+<body data-user-role="<%= user ? user.role : '' %>">
+  <%# Skip link for keyboard and screen reader users: jumps over the menu straight to the main content (accessibility). -%>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="The Daily Web - home">
+        <span class="brand-mark" aria-hidden="true">DW</span>
+        <span class="brand-name">The Daily Web</span>
+      </a>
+      <%# Main menu. The link for the current page gets the "active" class. -%>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>">News</a>
+        <%# Important: the menu depends on the role. Reporters see "My articles", editors see "Editor area". (The server checks the role on those pages too, hiding a link is not security.) -%>
+        <% if (user && user.role === 'reporter') { %>
+          <a href="/workspace" class="<%= currentPath.startsWith('/workspace') ? 'active' : '' %>">My articles</a>
+        <% } %>
+        <% if (user && user.role === 'editor') { %>
+          <a href="/editor" class="<%= currentPath.startsWith('/editor') ? 'active' : '' %>">Editor area</a>
+        <% } %>
+        <%# Logged in: show the name, role and a Log out button (a POST form). Not logged in: show the "Staff login" link. -%>
+        <% if (user) { %>
+          <span class="nav-user" title="Signed in as <%= user.username %>"><%= user.displayName %> <small>(<%= user.role %>)</small></span>
+          <form action="/logout" method="post" class="inline-form">
+            <button type="submit" class="btn btn-small btn-ghost">Log out</button>
+          </form>
+        <% } else { %>
+          <a href="/login" class="<%= currentPath === '/login' ? 'active' : '' %>">Staff login</a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+  <%# The main content area. The page's own content goes here, and footer.ejs closes this tag. -%>
+  <main id="main" class="container page">

@@ -1,0 +1,65 @@
+<%# Single article page (public): the full article, the comments with a comment form, and the sidebar. -%>
+<%# Important: the article page is rendered on the server (EJS), so the full text is already in the first HTML and search engines can read it. -%>
+<%- include('../partials/header') %>
+<div class="layout">
+  <div class="layout-main">
+    <%# The article. The data-* attributes give article.js the article id and category. -%>
+    <%# Important: every value below is printed with the escaping tag, so text from the database can't inject HTML (XSS protection). -%>
+    <article class="article" id="article" data-article-id="<%= article.id %>" data-category="<%= article.category %>">
+      <header class="article-header">
+        <p class="card-meta"><a class="tag" href="/?category=<%= encodeURIComponent(article.category) %>"><%= article.category %></a></p>
+        <h1 class="article-title"><%= article.title %></h1>
+        <p class="byline">
+          By <strong><%= article.author.displayName %></strong> &middot;
+          <%# The server prints the date as a fallback. In the browser, common.js replaces it with the visitor's local time (data-local-datetime). -%>
+          <time datetime="<%= new Date(article.publishedAt).toISOString() %>" data-local-datetime><%= fmtDateTime(article.publishedAt) %></time>
+        </p>
+        <p class="article-summary"><%= article.summary %></p>
+      </header>
+      <figure class="article-figure">
+        <img src="<%= article.image %>" alt="<%= article.title %>">
+      </figure>
+      <%# The article text was split into paragraphs on the server. We print one <p> for each. -%>
+      <section class="article-body" aria-label="Article text">
+        <% paragraphs.forEach(function (p) { %><p><%= p %></p><% }); %>
+      </section>
+    </article>
+
+    <%# Comments section. Readers don't need an account: they write a name and a text. -%>
+    <section class="comments" id="comments" aria-labelledby="comments-title">
+      <h2 id="comments-title">Comments <span class="count" id="comments-count"></span></h2>
+
+      <%# Comment form. article.js sends it with fetch (no page reload) and adds the new comment to the list. -%>
+      <form id="comment-form" class="comment-form" novalidate>
+        <div class="field">
+          <label for="c-name">Your name</label>
+          <input id="c-name" name="authorName" type="text" maxlength="40" required autocomplete="nickname">
+        </div>
+        <div class="field">
+          <label for="c-text">Your comment</label>
+          <textarea id="c-text" name="text" rows="4" maxlength="1000" required></textarea>
+        </div>
+        <p id="comment-error" class="form-error" role="alert" hidden></p>
+        <button type="submit" class="btn" id="comment-submit">Post comment</button>
+      </form>
+
+      <%# The first batch of comments is printed by the server. data-next-cursor tells article.js where the next batch starts (empty = no more). -%>
+      <ol id="comment-list" class="comment-list" data-next-cursor="<%= commentsCursor || '' %>">
+        <% comments.forEach(function (c) { %>
+          <li class="comment" data-id="<%= c.id %>">
+            <p class="comment-head"><strong><%= c.authorName %></strong>
+              <time datetime="<%= new Date(c.createdAt).toISOString() %>" data-local-datetime><%= fmtDateTime(c.createdAt) %></time></p>
+            <p class="comment-text"><%= c.text %></p>
+          </li>
+        <% }); %>
+      </ol>
+      <%# "No comments yet" is only visible when the list is empty. The "Load more" button is hidden when there is no next batch. -%>
+      <p id="comments-empty" class="muted" <%= comments.length ? 'hidden' : '' %>>No comments yet. Be the first to comment.</p>
+      <button type="button" id="comments-more" class="btn btn-ghost" <%= commentsCursor ? '' : 'hidden' %>>Load more comments</button>
+    </section>
+  </div>
+  <%# Sidebar with the weather widget and the "About" box. -%>
+  <%- include('../partials/sidebar') %>
+</div>
+<%# Scripts: weather.js fills the sidebar weather, article.js handles the comment form and the "Load more comments" button. -%>
+<%- include('../partials/footer', { scripts: ['/js/weather.js', '/js/article.js'] }) %>
